@@ -123,4 +123,44 @@ class IndexController extends Controller
         $bstate = State::where('id',$id)->first();
         return view('frontend.property.state_property',compact('property','bstate'));
     }// End Method
+
+    public function BuyPropertySeach(Request $request){
+        $request->validate(['search' => 'required']);
+        $item = $request->search;
+        $sstate = $request->state;
+        $stype = $request->ptype_id;
+
+        $property = Property::where('property_name', 'like' , '%' .$item. '%')->where('property_status','buy')->with('type','pstate')
+            ->whereHas('pstate', function($q) use ($sstate){
+                $q->where('state_name','like' , '%' .$sstate. '%');
+            })
+            ->whereHas('type', function($q) use ($stype){
+                $q->where('type_name','like' , '%' .$stype. '%');
+            })
+            ->get();
+
+        return view('frontend.property.property_search',compact('property'));
+    }// End Method
+
+    public function RentPropertySeach(Request $request){
+
+        $request->validate(['search' => 'required']);
+        $item = $request->search;
+        $sstate = $request->state;
+        $stype = $request->ptype_id;
+
+        $property = Property::where('property_name', 'like' , '%' .$item. '%')->where('property_status','rent')->with('type','pstate')
+            ->whereHas('pstate', function($q) use ($sstate){
+                $q->where('state_name','like' , '%' .$sstate. '%');
+            })
+            ->whereHas('type', function($q) use ($stype){
+                $q->where('type_name','like' , '%' .$stype. '%');
+            })
+            ->get();
+
+        return view('frontend.property.property_search',compact('property'));
+
+    }// End Method
+
+
 }
