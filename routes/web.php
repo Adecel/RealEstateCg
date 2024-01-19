@@ -11,6 +11,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Controllers\Backend\StateController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Backend\BlogController;
+
 use App\Http\Controllers\Agent\AgentPropertyController;
 use App\Http\Controllers\Frontend\IndexController;
 use App\Http\Controllers\Frontend\WishlistController;
@@ -26,73 +27,59 @@ use App\Http\Controllers\Frontend\CompareController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
 // User Frontend All Route
 Route::get('/', [UserController::class, 'Index']);
-
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-//Group Middleware (Protection)
-//Start User Middleware
 Route::middleware('auth')->group(function () {
     Route::get('/user/profile', [UserController::class, 'UserProfile'])->name('user.profile');
     Route::post('/user/profile/store', [UserController::class, 'UserProfileStore'])->name('user.profile.store');
     Route::get('/user/logout', [UserController::class, 'UserLogout'])->name('user.logout');
     Route::get('/user/change/password', [UserController::class, 'UserChangePassword'])->name('user.change.password');
     Route::post('/user/password/update', [UserController::class, 'UserPasswordUpdate'])->name('user.password.update');
-
     // User WishlistAll Route
     Route::controller(WishlistController::class)->group(function(){
         Route::get('/user/wishlist', 'UserWishlist')->name('user.wishlist');
         Route::get('/get-wishlist-property', 'GetWishlistProperty');
         Route::get('/wishlist-remove/{id}', 'WishlistRemove');
-    });
 
+    });
     // User Compare All Route
     Route::controller(CompareController::class)->group(function(){
         Route::get('/user/compare', 'UserCompare')->name('user.compare');
         Route::get('/get-compare-property', 'GetCompareProperty');
+        Route::get('/compare-remove/{id}', 'CompareRemove');
+
     });
-
 });
-
 require __DIR__.'/auth.php';
-
-//Group Middleware (Protection)
-//Start Admin Middleware
-Route::middleware(['auth', 'role:admin'])->group(function (){
+/// Admin Group Middleware
+Route::middleware(['auth','role:admin'])->group(function(){
     Route::get('/admin/dashboard', [AdminController::class, 'AdminDashboard'])->name('admin.dashboard');
     Route::get('/admin/logout', [AdminController::class, 'AdminLogout'])->name('admin.logout');
     Route::get('/admin/profile', [AdminController::class, 'AdminProfile'])->name('admin.profile');
     Route::post('/admin/profile/store', [AdminController::class, 'AdminProfileStore'])->name('admin.profile.store');
     Route::get('/admin/change/password', [AdminController::class, 'AdminChangePassword'])->name('admin.change.password');
     Route::post('/admin/update/password', [AdminController::class, 'AdminUpdatePassword'])->name('admin.update.password');
-});// End Admin Middleware
+}); // End Group Admin Middleware
 
-//Start Agent Middleware
-Route::middleware(['auth', 'role:agent'])->group(function (){
+/// Agent Group Middleware
+Route::middleware(['auth','role:agent'])->group(function(){
     Route::get('/agent/dashboard', [AgentController::class, 'AgentDashboard'])->name('agent.dashboard');
     Route::get('/agent/logout', [AgentController::class, 'AgentLogout'])->name('agent.logout');
     Route::get('/agent/profile', [AgentController::class, 'AgentProfile'])->name('agent.profile');
     Route::post('/agent/profile/store', [AgentController::class, 'AgentProfileStore'])->name('agent.profile.store');
     Route::get('/agent/change/password', [AgentController::class, 'AgentChangePassword'])->name('agent.change.password');
     Route::post('/agent/update/password', [AgentController::class, 'AgentUpdatePassword'])->name('agent.update.password');
-}); // End Agent Middleware
-
-
+}); // End Group Agent Middleware
 Route::get('/agent/login', [AgentController::class, 'AgentLogin'])->name('agent.login')->middleware(RedirectIfAuthenticated::class);
 Route::post('/agent/register', [AgentController::class, 'AgentRegister'])->name('agent.register');
-
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware(RedirectIfAuthenticated::class);
-
-// Admin Group Middleware
+/// Admin Group Middleware
 Route::middleware(['auth','role:admin'])->group(function(){
     // Property Type All Route
     Route::controller(PropertyTypeController::class)->group(function(){
@@ -103,7 +90,6 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::post('/update/type', 'UpdateType')->name('update.type');
         Route::get('/delete/type/{id}', 'DeleteType')->name('delete.type');
     });
-
     // Amenities Type All Route
     Route::controller(PropertyTypeController::class)->group(function(){
         Route::get('/all/amenitie', 'AllAmenitie')->name('all.amenitie');
@@ -113,7 +99,6 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::post('/update/amenitie', 'UpdateAmenitie')->name('update.amenitie');
         Route::get('/delete/amenitie/{id}', 'DeleteAmenitie')->name('delete.amenitie');
     });
-
     // Property All Route
     Route::controller(PropertyController::class)->group(function(){
         Route::get('/all/property', 'AllProperty')->name('all.property');
@@ -134,7 +119,6 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::get('/package/invoice/{id}', 'PackageInvoice')->name('package.invoice');
         Route::get('/admin/property/message/', 'AdminPropertyMessage')->name('admin.property.message');
     });
-
     // Agent All Route from admin
     Route::controller(AdminController::class)->group(function(){
         Route::get('/all/agent', 'AllAgent')->name('all.agent');
@@ -143,9 +127,9 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::get('/edit/agent/{id}', 'EditAgent')->name('edit.agent');
         Route::post('/update/agent', 'UpdateAgent')->name('update.agent');
         Route::get('/delete/agent/{id}', 'DeleteAgent')->name('delete.agent');
+
         Route::get('/changeStatus', 'changeStatus');
     });
-
     // State  All Route
     Route::controller(StateController::class)->group(function(){
         Route::get('/all/state', 'AllState')->name('all.state');
@@ -155,7 +139,6 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::post('/update/state', 'UpdateState')->name('update.state');
         Route::get('/delete/state/{id}', 'DeleteState')->name('delete.state');
     });
-
     // Testimonials  All Route
     Route::controller(TestimonialController::class)->group(function(){
         Route::get('/all/testimonials', 'AllTestimonials')->name('all.testimonials');
@@ -165,20 +148,15 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::post('/update/testimonials', 'UpdateTestimonials')->name('update.testimonials');
         Route::get('/delete/testimonials/{id}', 'DeleteTestimonials')->name('delete.testimonials');
     });
-
     // Blog Cateory All Route
     Route::controller(BlogController::class)->group(function(){
-
         Route::get('/all/blog/category', 'AllBlogCategory')->name('all.blog.category');
         Route::post('/store/blog/category', 'StoreBlogCategory')->name('store.blog.category');
         Route::get('/blog/category/{id}', 'EditBlogCategory');
         Route::post('/update/blog/category', 'UpdateBlogCategory')->name('update.blog.category');
         Route::get('/delete/blog/category/{id}', 'DeleteBlogCategory')->name('delete.blog.category');
-
     });
-
-
-    // Post All Route
+    // Testimonials  All Route
     Route::controller(BlogController::class)->group(function(){
         Route::get('/all/post', 'AllPost')->name('all.post');
         Route::get('/add/post', 'AddPost')->name('add.post');
@@ -187,12 +165,9 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::post('/update/post', 'UpdatePost')->name('update.post');
         Route::get('/delete/post/{id}', 'DeletePost')->name('delete.post');
     });
-
 }); // End Group Admin Middleware
-
 /// Agent Group Middleware
 Route::middleware(['auth','role:agent'])->group(function(){
-
     // Agent All Property
     Route::controller(AgentPropertyController::class)->group(function(){
         Route::get('/agent/all/property', 'AgentAllProperty')->name('agent.all.property');
@@ -210,7 +185,6 @@ Route::middleware(['auth','role:agent'])->group(function(){
         Route::get('/agent/property/message/', 'AgentPropertyMessage')->name('agent.property.message');
         Route::get('/agent/message/details/{id}', 'AgentMessageDetails')->name('agent.message.details');
     });
-
     // Agent Buy Package Route from admin
     Route::controller(AgentPropertyController::class)->group(function(){
         Route::get('/buy/package', 'BuyPackage')->name('buy.package');
@@ -220,10 +194,10 @@ Route::middleware(['auth','role:agent'])->group(function(){
         Route::post('/store/professional/plan', 'StoreProfessionalPlan')->name('store.professional.plan');
         Route::get('/package/history', 'PackageHistory')->name('package.history');
         Route::get('/agent/package/invoice/{id}', 'AgentPackageInvoice')->name('agent.package.invoice');
+
     });
 
 }); // End Group Agent Middleware
-
 // Frontend Property Details All Route
 Route::get('/property/details/{id}/{slug}', [IndexController::class, 'PropertyDetails']);
 // Wishlist Add Route
@@ -236,20 +210,22 @@ Route::post('/property/message', [IndexController::class, 'PropertyMessage'])->n
 Route::get('/agent/details/{id}', [IndexController::class, 'AgentDetails'])->name('agent.details');
 // Send Message from Agent Details Page
 Route::post('/agent/details/message', [IndexController::class, 'AgentDetailsMessage'])->name('agent.details.message');
-
 // Get All Rent Property
 Route::get('/rent/property', [IndexController::class, 'RentProperty'])->name('rent.property');
 // Get All Buy Property
 Route::get('/buy/property', [IndexController::class, 'BuyProperty'])->name('buy.property');
 // Get All Property Type Data
 Route::get('/property/type/{id}', [IndexController::class, 'PropertyType'])->name('property.type');
-
 // Get State Details Data
 Route::get('/state/details/{id}', [IndexController::class, 'StateDetails'])->name('state.details');
-
 // Home Page Buy Seach Option
 Route::post('/buy/property/search', [IndexController::class, 'BuyPropertySeach'])->name('buy.property.search');
 // Home Page Rent Seach Option
 Route::post('/rent/property/search', [IndexController::class, 'RentPropertySeach'])->name('rent.property.search');
 // All Property Seach Option
 Route::post('/all/property/search', [IndexController::class, 'AllPropertySeach'])->name('all.property.search');
+// Blog Details Route
+Route::get('/blog/details/{slug}', [BlogController::class, 'BlogDetails']);
+Route::get('/blog/cat/list/{id}', [BlogController::class, 'BlogCatList']);
+Route::get('/blog', [BlogController::class, 'BlogList'])->name('blog.list');
+Route::post('/store/comment', [BlogController::class, 'StoreComment'])->name('store.comment');

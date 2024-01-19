@@ -10,7 +10,7 @@ use App\Models\User;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Comment;
 
 class BlogController extends Controller
 {
@@ -174,9 +174,48 @@ class BlogController extends Controller
             'message' => 'BlogPost Deleted Successfully',
             'alert-type' => 'success'
         );
-
         return redirect()->back()->with($notification);
+    }// End Method
 
+    public function BlogDetails($slug){
+        $blog = BlogPost::where('post_slug',$slug)->first();
+        $tags = $blog->post_tags;
+        $tags_all = explode(',',$tags);
+        $bcategory = BlogCategory::latest()->get();
+        $dpost = BlogPost::latest()->limit(3)->get();
+        return view('frontend.blog.blog_details',compact('blog','tags_all','bcategory','dpost'));
+    }// End Method
+
+    public function BlogCatList($id){
+        $blog = BlogPost::where('blogcat_id',$id)->get();
+        $breadcat = BlogCategory::where('id',$id)->first();
+        $bcategory = BlogCategory::latest()->get();
+        $dpost = BlogPost::latest()->limit(3)->get();
+        return view('frontend.blog.blog_cat_list', compact('blog','breadcat','bcategory','dpost'));
+    }// End Method
+
+    public function BlogList(){
+        $blog = BlogPost::latest()->get();
+        $bcategory = BlogCategory::latest()->get();
+        $dpost = BlogPost::latest()->limit(3)->get();
+        return view('frontend.blog.blog_list', compact('blog','bcategory','dpost'));
+    }// End Method
+
+    public function StoreComment(Request $request){
+        $pid = $request->post_id;
+        Comment::insert([
+            'user_id' => Auth::user()->id,
+            'post_id' => $pid,
+            'parent_id' => null,
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'created_at' => Carbon::now(),
+        ]);
+        $notification = array(
+            'message' => 'Comment Inserted Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
     }// End Method
 
 }
