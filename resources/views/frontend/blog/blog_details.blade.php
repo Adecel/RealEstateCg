@@ -52,64 +52,59 @@
                                 </div>
                             </div>
                         </div>
+                        @php
+                            $comment = App\Models\Comment::where('post_id',$blog->id)->where('parent_id',null)->limit(5)->get();
+                        @endphp
                         <div class="comments-area">
                             <div class="group-title">
                                 <h4>3 Comments</h4>
                             </div>
                             <div class="comment-box">
-                                <div class="comment">
-                                    <figure class="thumb-box">
-                                        <img src="assets/images/news/comment-1.jpg" alt="">
-                                    </figure>
-                                    <div class="comment-inner">
-                                        <div class="comment-info clearfix">
-                                            <h5>Rebeka Dawson</h5>
-                                            <span>April 10, 2020</span>
-                                        </div>
-                                        <div class="text">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nos trud exerc.</p>
-                                            <a href="blog-details.html"><i class="fas fa-share"></i>Reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment replay-comment">
-                                    <figure class="thumb-box">
-                                        <img src="assets/images/news/comment-2.jpg" alt="">
-                                    </figure>
-                                    <div class="comment-inner">
-                                        <div class="comment-info clearfix">
-                                            <h5>Elizabeth Winstead</h5>
-                                            <span>April 10, 2020</span>
-                                        </div>
-                                        <div class="text">
-                                            <p>Lorem ipsum dolor sit amet, consectur adipisicing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nos</p>
-                                            <a href="blog-details.html"><i class="fas fa-share"></i>Reply</a>
+                                @foreach($comment as $com)
+                                    <div class="comment">
+                                        <figure class="thumb-box">
+                                            <img src="{{ (!empty($com->user->photo)) ? url('upload/user_images/'.$com->user->photo) : url('upload/no_image.jpg') }}" alt="">
+                                        </figure>
+                                        <div class="comment-inner">
+                                            <div class="comment-info clearfix">
+                                                <h5>{{ $com->user->name }}</h5>
+                                                <span>{{ $com->created_at->format('M d Y') }}</span>
+                                            </div>
+                                            <div class="text">
+                                                <p>{{ $com->subject  }}</p>
+                                                <p>{{ $com->message  }}</p>
+                                                <a href="blog-details.html"><i class="fas fa-share"></i>Reply</a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="comment">
-                                    <figure class="thumb-box">
-                                        <img src="assets/images/news/comment-3.jpg" alt="">
-                                    </figure>
-                                    <div class="comment-inner">
-                                        <div class="comment-info clearfix">
-                                            <h5>Benedict Cumbatch</h5>
-                                            <span>April 10, 2020</span>
+                                    @php
+                                        $reply = App\Models\Comment::where('parent_id',$com->id)->get();
+                                    @endphp
+                                    @foreach($reply as $rep)
+                                        <div class="comment replay-comment">
+                                            <figure class="thumb-box">
+                                                <img src="{{ url('upload/ariyan.jpg') }}" alt="">
+                                            </figure>
+                                            <div class="comment-inner">
+                                                <div class="comment-info clearfix">
+                                                    <h5>{{ $rep->subject }}</h5>
+                                                    <span>{{ $rep->created_at->format('M d Y') }}</span>
+                                                </div>
+                                                <div class="text">
+                                                    <p>{{ $rep->message }}</p>
+                                                    <a href="blog-details.html"><i class="fas fa-share"></i>Reply</a>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="text">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nos trud exerc.</p>
-                                            <a href="blog-details.html"><i class="fas fa-share"></i>Reply</a>
-                                        </div>
-                                    </div>
-                                </div>
+                                    @endforeach
+                                @endforeach
                             </div>
                         </div>
                         <div class="comments-form-area">
                             <div class="group-title">
                                 <h4>Leave a Comment</h4>
                             </div>
-                            @auth
-                                <form action="blog-details.html" method="post" class="comment-form default-form">
+                                @auth
                                     <form action="{{ route('store.comment') }}" method="post" class="comment-form default-form">
                                         @csrf
 
@@ -129,7 +124,11 @@
                                         </div>
                                     </form>
                                     @else
-                                        <p><b>For Add Comment You need to login first <a href="{{ route('login')}}"> Login Here </a> </b></p>
+                                        <p>
+                                            <b>Pour Ajouter un commentaire Vous devez d'abord vous connecter
+                                                <a href="{{ route('login')}}"> Login Here </a>
+                                            </b>
+                                        </p>
                             @endauth
                         </div>
                     </div>
@@ -181,7 +180,6 @@
                                 <h4>Recent Posts</h4>
                             </div>
                             <div class="post-inner">
-
                                 @foreach($dpost as $post)
                                     <div class="post">
                                         <figure class="post-thumb"><a href="blog-details.html"><img src="{{ asset($post->post_image) }}" alt=""></a></figure>
@@ -191,8 +189,6 @@
                                 @endforeach
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
