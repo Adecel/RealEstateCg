@@ -11,6 +11,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Controllers\Backend\StateController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Backend\BlogController;
+use App\Http\Controllers\Backend\SettingController;
 
 use App\Http\Controllers\Agent\AgentPropertyController;
 use App\Http\Controllers\Frontend\IndexController;
@@ -76,9 +77,11 @@ Route::middleware(['auth','role:agent'])->group(function(){
     Route::get('/agent/change/password', [AgentController::class, 'AgentChangePassword'])->name('agent.change.password');
     Route::post('/agent/update/password', [AgentController::class, 'AgentUpdatePassword'])->name('agent.update.password');
 }); // End Group Agent Middleware
+
 Route::get('/agent/login', [AgentController::class, 'AgentLogin'])->name('agent.login')->middleware(RedirectIfAuthenticated::class);
 Route::post('/agent/register', [AgentController::class, 'AgentRegister'])->name('agent.register');
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware(RedirectIfAuthenticated::class);
+
 /// Admin Group Middleware
 Route::middleware(['auth','role:admin'])->group(function(){
     // Property Type All Route
@@ -165,7 +168,14 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::post('/update/post', 'UpdatePost')->name('update.post');
         Route::get('/delete/post/{id}', 'DeletePost')->name('delete.post');
     });
+
+    // SMTP Setting  All Route
+    Route::controller(SettingController::class)->group(function(){
+        Route::get('/smtp/setting', 'SmtpSetting')->name('smtp.setting');
+        Route::post('/update/smpt/setting', 'UpdateSmtpSetting')->name('update.smpt.setting');
+    });
 }); // End Group Admin Middleware
+
 /// Agent Group Middleware
 Route::middleware(['auth','role:agent'])->group(function(){
     // Agent All Property
@@ -203,32 +213,46 @@ Route::middleware(['auth','role:agent'])->group(function(){
     });
 
 }); // End Group Agent Middleware
+
 // Frontend Property Details All Route
 Route::get('/property/details/{id}/{slug}', [IndexController::class, 'PropertyDetails']);
+
 // Wishlist Add Route
 Route::post('/add-to-wishList/{property_id}', [WishlistController::class, 'AddToWishList']);
+
 // Compare Add Route
 Route::post('/add-to-compare/{property_id}', [CompareController::class, 'AddToCompare']);
+
 // Send Message from Property Details Page
 Route::post('/property/message', [IndexController::class, 'PropertyMessage'])->name('property.message');
+
 // Agent Details Page in Frontend
 Route::get('/agent/details/{id}', [IndexController::class, 'AgentDetails'])->name('agent.details');
+
 // Send Message from Agent Details Page
 Route::post('/agent/details/message', [IndexController::class, 'AgentDetailsMessage'])->name('agent.details.message');
+
 // Get All Rent Property
 Route::get('/rent/property', [IndexController::class, 'RentProperty'])->name('rent.property');
+
 // Get All Buy Property
 Route::get('/buy/property', [IndexController::class, 'BuyProperty'])->name('buy.property');
+
 // Get All Property Type Data
 Route::get('/property/type/{id}', [IndexController::class, 'PropertyType'])->name('property.type');
+
 // Get State Details Data
 Route::get('/state/details/{id}', [IndexController::class, 'StateDetails'])->name('state.details');
+
 // Home Page Buy Seach Option
 Route::post('/buy/property/search', [IndexController::class, 'BuyPropertySeach'])->name('buy.property.search');
+
 // Home Page Rent Seach Option
 Route::post('/rent/property/search', [IndexController::class, 'RentPropertySeach'])->name('rent.property.search');
+
 // All Property Seach Option
 Route::post('/all/property/search', [IndexController::class, 'AllPropertySeach'])->name('all.property.search');
+
 // Blog Details Route
 Route::get('/blog/details/{slug}', [BlogController::class, 'BlogDetails']);
 Route::get('/blog/cat/list/{id}', [BlogController::class, 'BlogCatList']);
