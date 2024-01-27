@@ -1,18 +1,32 @@
+@php
+    $setting = App\Models\SiteSetting::find(1);
+    $blog = App\Models\BlogPost::latest()->limit(2)->get();
+@endphp
+
 <header class="main-header">
     <!-- header-top -->
     <div class="header-top">
         <div class="top-inner clearfix">
             <div class="left-column pull-left">
                 <ul class="info clearfix">
-                    <li><i class="far fa-map-marker-alt"></i>l'addresse du bureau FlCg4,76</li>
+{{--                    <li><i class="far fa-map-marker-alt"></i>l'addresse du bureau FlCg4,76</li>--}}
+                    <li><i class="far fa-map-marker-alt"></i>{{ $setting->company_address }}</li>
                     <li><i class="far fa-clock"></i>Lundi a Vendredi de 8.00 - 17.00</li>
-                    <li><i class="far fa-phone"></i><a href="tel:2512353256">+242-05-559-4829</a></li>
+{{--                    <li><i class="far fa-phone"></i><a href="tel:2512353256">+242-05-559-4829</a></li>--}}
+                    <li><i class="far fa-phone"></i><a href="tel:2512353256">+{{ $setting->support_phone }}</a></li>
                 </ul>
             </div>
             <div class="right-column pull-right">
+{{--                <ul class="social-links clearfix">--}}
+{{--                    <li><a href="index.html"><i class="fab fa-facebook-f"></i></a></li>--}}
+{{--                    <li><a href="index.html"><i class="fab fa-twitter"></i></a></li>--}}
+{{--                    <li><a href="index.html"><i class="fab fa-pinterest-p"></i></a></li>--}}
+{{--                    <li><a href="index.html"><i class="fab fa-google-plus-g"></i></a></li>--}}
+{{--                    <li><a href="index.html"><i class="fab fa-vimeo-v"></i></a></li>--}}
+{{--                </ul>--}}
                 <ul class="social-links clearfix">
-                    <li><a href="index.html"><i class="fab fa-facebook-f"></i></a></li>
-                    <li><a href="index.html"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="{{ $setting->facebook }}"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a href="{{ $setting->twitter }}"><i class="fab fa-twitter"></i></a></li>
                     <li><a href="index.html"><i class="fab fa-pinterest-p"></i></a></li>
                     <li><a href="index.html"><i class="fab fa-google-plus-g"></i></a></li>
                     <li><a href="index.html"><i class="fab fa-vimeo-v"></i></a></li>
@@ -37,7 +51,8 @@
         <div class="outer-box">
             <div class="main-box">
                 <div class="logo-box">
-                    <figure class="logo"><a href="{{ url('/') }}"><img src="{{ asset('frontend/assets/images/logo.png') }}" alt=""></a></figure>
+{{--                    <figure class="logo"><a href="{{ url('/') }}"><img src="{{ asset('frontend/assets/images/logo.png') }}" alt=""></a></figure>--}}
+                    <figure class="logo"><a href="{{ url('/') }}"><img src="{{ asset($setting->logo) }}" alt=""></a></figure>
                 </div>
                 <div class="menu-area clearfix">
                     <!--Mobile Navigation Toggler-->
@@ -81,7 +96,8 @@
         <div class="outer-box">
             <div class="main-box">
                 <div class="logo-box">
-                    <figure class="logo"><a href="index.html"><img src="{{ asset('frontend/assets/images/logo.png') }}" alt=""></a></figure>
+{{--                    <figure class="logo"><a href="index.html"><img src="{{ asset('frontend/assets/images/logo.png') }}" alt=""></a></figure>--}}
+                    <figure class="logo"><a href="{{ url('/') }}"><img src="{{ asset($setting->logo) }}" alt=""></a></figure>
                 </div>
                 <div class="menu-area clearfix">
                     <nav class="main-menu clearfix">

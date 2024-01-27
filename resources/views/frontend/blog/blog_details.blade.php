@@ -1,5 +1,8 @@
 @extends('frontend.frontend_dashboard')
 @section('main')
+    @section('title')
+        {{ $blog->post_title }}
+    @endsection
     <!--Page Title-->
     <section class="page-title-two bg-color-1 centred">
         <div class="pattern-layer">

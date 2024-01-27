@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/logout', [UserController::class, 'UserLogout'])->name('user.logout');
     Route::get('/user/change/password', [UserController::class, 'UserChangePassword'])->name('user.change.password');
     Route::post('/user/password/update', [UserController::class, 'UserPasswordUpdate'])->name('user.password.update');
+    Route::get('/user/schedule/request', [UserController::class, 'UserScheduleRequest'])->name('user.schedule.request');
     // User WishlistAll Route
     Route::controller(WishlistController::class)->group(function(){
         Route::get('/user/wishlist', 'UserWishlist')->name('user.wishlist');
@@ -174,6 +175,14 @@ Route::middleware(['auth','role:admin'])->group(function(){
         Route::get('/smtp/setting', 'SmtpSetting')->name('smtp.setting');
         Route::post('/update/smpt/setting', 'UpdateSmtpSetting')->name('update.smpt.setting');
     });
+
+    // Site Setting  All Route
+    Route::controller(SettingController::class)->group(function(){
+        Route::get('/site/setting', 'SiteSetting')->name('site.setting');
+        Route::post('/update/site/setting', 'UpdateSiteSetting')->name('update.site.setting');
+    });
+
+
 }); // End Group Admin Middleware
 
 /// Agent Group Middleware
